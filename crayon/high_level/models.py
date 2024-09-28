@@ -88,7 +88,7 @@ class Produit(Objet):
 
 
 class Stock(models.Model):
-    objet = models.ForeignKey(Ressource, on_delete=models.CASCADE)
+    ressource = models.ForeignKey(Ressource, on_delete=models.CASCADE)
     nombre = models.IntegerField(default=0)
 
     def __str__(self):
