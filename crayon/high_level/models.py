@@ -70,17 +70,21 @@ class Etape(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     quantite_ressource = models.ForeignKey(QuantiteRessource, on_delete=models.CASCADE)
     duree = models.IntegerField(default=0)
-    etape_suivant = models.ForeignKey("self", on_delete=models.PROTECT)
+    etape_suivant = models.ForeignKey(
+        "self", null=True, on_delete=models.PROTECT, blank=True
+    )
 
     def __str__(self):
         return f"{self.nom} : {self.machine.nom} \n {self.duree}"
 
 
 class Produit(Objet):
-    premiere_etape = models.ForeignKey(Etape, on_delete=models.CASCADE)
+    premiere_etape = models.ForeignKey(
+        Etape, null=True, on_delete=models.PROTECT, blank=True
+    )
 
     def __str__(self):
-        return f"{self.nom} \n {self.premiere_etape.machine}"
+        return f"{self.nom} "
 
 
 class Stock(models.Model):
