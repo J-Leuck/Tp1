@@ -92,4 +92,4 @@ class Stock(models.Model):
     nombre = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.objet.nom} : {self.nombre}"
+        return f"{self.ressource.nom} : {self.nombre}"
