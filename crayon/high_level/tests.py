@@ -21,7 +21,7 @@ class UsineCostModelTests(TestCase):
         self.stock = Stock.objects.create(ressource=self.objet1, nombre=1000)
         self.stock = Stock.objects.create(ressource=self.objet2, nombre=50)
 
-    def Calcul_cout_usine(self):
+    def test_Calcul_cout_usine(self):
         self.usineCost = self.usine.costs()
         machine_cost = 2000 + 1000
         surface_cost = 2000 * 50
@@ -29,7 +29,7 @@ class UsineCostModelTests(TestCase):
 
         self.assertEqual(self.usineCost, self.total_cost)
 
-    def Calcul_cout_quantiteRessource(self):
+    def test_Calcul_cout_quantiteRessource(self):
         quantite_bois = QuantiteRessource.objects.get(ressource=self.objet1)
         quantite_mine = QuantiteRessource.objects.get(ressource=self.objet2)
 
@@ -44,7 +44,7 @@ class UsineCostModelTests(TestCase):
         self.assertEqual(bois_cost, bois_cost_attendu)
         self.assertEqual(mine_cost, mine_cost_attendu)
 
-    def Calcul_cout_total(self):
+    def test_Calcul_cout_total(self):
         cout_total = self.usineCost + self.total_produit
 
         cout_total_attendu = 0  # self.total_cost + self.total_produit_attendu
