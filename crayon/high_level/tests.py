@@ -42,7 +42,7 @@ class UsineCostModelTests(TestCase):
 
         bois_cost_attendu = 10000
         mine_cost_attendu = 750
-        total_produit_attendu = bois_cost_attendu + mine_cost_attendu
+        # total_produit_attendu = bois_cost_attendu + mine_cost_attendu
 
         self.assertEqual(bois_cost, bois_cost_attendu)
         self.assertEqual(mine_cost, mine_cost_attendu)
@@ -50,6 +50,6 @@ class UsineCostModelTests(TestCase):
         # def test_Calcul_cout_total(self):
         cout_total = usineCost + total_produit
 
-        cout_total_attendu = total_cost + total_produit_attendu
+        cout_total_attendu = 110750  # total_cost + total_produit_attendu
 
         self.assertEqual(cout_total, cout_total_attendu)
