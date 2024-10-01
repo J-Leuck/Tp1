@@ -15,6 +15,7 @@ class UsineCostModelTests(TestCase):
         self.machine_2 = Machine.objects.create(
             nom="Bras robot", prix=1000, n_serie=15732
         )
+        self.usine.machines.set([self.machine_1, self.machine_2])
 
         self.objet1 = Ressource.objects.create(nom="Bois", prix=10)
         self.objet2 = Ressource.objects.create(nom="Mine", prix=15)
