@@ -31,8 +31,10 @@ class UsineCostModelTests(TestCase):
         self.assertEqual(usineCost, total_cost)
 
         # def test_Calcul_cout_quantiteRessource(self):
-        quantite_bois = QuantiteRessource.objects.get(ressource=objet1)
-        quantite_mine = QuantiteRessource.objects.get(ressource=objet2)
+        quantite_bois = QuantiteRessource.objects.create(
+            ressource=objet1, quantite=1000
+        )
+        quantite_mine = QuantiteRessource.objects.create(ressource=objet2, quantite=50)
 
         bois_cost = quantite_bois.costs()
         mine_cost = quantite_mine.costs()
