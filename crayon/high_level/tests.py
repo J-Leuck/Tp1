@@ -8,7 +8,7 @@ class UsineCostModelTests(TestCase):
         self.ville = Ville.objects.create(
             nom="Toulouse", code_postal=31000, prix_metre2=2000
         )
-        self.usine = Usine.objects.create(nom="Dopron", Ville="Toulouse", surface=50)
+        self.usine = Usine.objects.create(nom="Dopron", ville="Toulouse", surface=50)
         self.machine_1 = Machine.objects.create(
             nom="Bras robot", prix=2000, n_serie=17896
         )

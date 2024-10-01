@@ -72,12 +72,12 @@ class Usine(Local):  # heritage Usine herite de local
         return self.nom
 
     def costs(self):
-        # machine_cost = 0
+        machine_cost = 0
         # machine_cost = sum(list(Machine.objects.values_list('prix', flat=True))) #or
-        # for mach in Machine.objects.all():
-        #   for pri in mach.prix:
-        #      machine_cost = machine_cost + pri
-        machine_cost = sum(Machine.costs() for Machin in self.machines.all())
+        for mach in Machine.objects.all():
+            for pri in mach.prix:
+                machine_cost = machine_cost + mach.prix
+        # machine_cost = sum(Machine.costs() for Machin in self.machines.all())
         local_cost = self.surface * self.ville.prix_metre2
         return machine_cost + local_cost
 
@@ -91,10 +91,10 @@ class Usine(Local):  # heritage Usine herite de local
             },
             "surface": self.surface,
             # "machines": [
-            #   {
-            #      "nom": self.machine.nom,
-            #      "prix": machine.prix,
-            #      "numero_de_serie": machine.numero_de_serie,
+            # {
+            #   "nom": self.machines.nom,
+            #  "prix": self.machines.prix,
+            # "numero_de_serie": machine.numero_de_serie,
             # }
             # for machine in self.machines.all()
             # ],
@@ -164,10 +164,10 @@ class Etape(models.Model):
                 "ressource": self.quantite_ressource.ressource,
                 "quantite": self.quantite_ressource.quantite,
             },
-            "duree": self.duree,
+            # "duree": self.duree,
             # "etape_suivante": {
-            #   "nom": self.etape_suivant.nom,
-            #   "duree": self.etape_suivant.duree,
+            #  "nom": self.etape_suivant.nom,
+            # "duree": self.etape_suivant.duree,
             # }
             # if self.etape_suivant
             # else None,
