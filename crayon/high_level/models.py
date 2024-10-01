@@ -11,6 +11,13 @@ class Ville(models.Model):
     def __str__(self):
         return f"{self.nom} \n {self.code_postal}"
 
+    def json(self):
+        return {
+            "nom": self.nom,
+            "code_postal": self.code_postal,
+            "prix_metre2": self.prix_metre2,
+        }
+
 
 class Local(models.Model):
     nom = models.CharField(max_length=100)
@@ -21,6 +28,17 @@ class Local(models.Model):
 
     def __str__(self):
         return f"{self.nom} \n {self.ville}"
+
+    def json(self):
+        return {
+            "nom": self.nom,
+            "ville": {
+                "nom": self.nom,
+                "code_postal": self.ville.code_postal,
+                "prix_metre2": self.ville.prix_metre2,
+            },
+            "surface": self.surface,
+        }
 
 
 class SiegeSocial(Local):  # heritage siege herite de local
@@ -36,12 +54,51 @@ class Machine(models.Model):
     def __str__(self):
         return f"{self.nom} : {self.n_serie}"
 
+    def costs(self):
+        return self.prix
+
+    def json(self):
+        return {
+            "nom": self.nom,
+            "prix": self.prix,
+            "n_serie": self.n_serie,
+        }
+
 
 class Usine(Local):  # heritage Usine herite de local
     machines = models.ManyToManyField(Machine)  # agrégation
 
     def __str__(self):
         return self.nom
+
+    def costs(self):
+        # machine_cost = 0
+        # machine_cost = sum(list(Machine.objects.values_list('prix', flat=True))) #or
+        # for mach in Machine.objects.all():
+        #   for pri in mach.prix:
+        #      machine_cost = machine_cost + pri
+        machine_cost = sum(Machine.costs() for Machin in self.machines.all())
+        local_cost = self.surface * self.ville.prix_metre2
+        return machine_cost + local_cost
+
+    def json(self):
+        return {
+            "nom": self.nom,
+            "ville": {
+                "nom": self.ville.nom,
+                "code_postale": self.ville.code_postal,
+                "prix": self.ville.prix_metre2,
+            },
+            "surface": self.surface,
+            # "machines": [
+            #   {
+            #      "nom": self.machine.nom,
+            #      "prix": machine.prix,
+            #      "numero_de_serie": machine.numero_de_serie,
+            # }
+            # for machine in self.machines.all()
+            # ],
+        }
 
 
 class Objet(models.Model):
@@ -50,6 +107,12 @@ class Objet(models.Model):
 
     def __str__(self):
         return f"{self.nom} \n {self.prix} $"
+
+    def json(self):
+        return {
+            "nom": self.nom,
+            "prix": self.prix,
+        }
 
 
 class Ressource(Objet):
@@ -64,6 +127,18 @@ class QuantiteRessource(models.Model):
     def __str__(self):
         return f"{self.ressource.nom} : {self.quantite}"
 
+    def costs(self):
+        return self.quantite * self.ressource.prix
+
+    def json(self):
+        return {
+            "ressource": {
+                "nom": self.ressource.nom,
+                "prix": self.ressource.prix,
+            },
+            "quantite": self.quantite,
+        }
+
 
 class Etape(models.Model):
     nom = models.CharField(max_length=100)
@@ -77,6 +152,27 @@ class Etape(models.Model):
     def __str__(self):
         return f"{self.nom} : {self.machine.nom} \n {self.duree}"
 
+    def json(self):
+        return {
+            "nom": self.nom,
+            "machine": {
+                "nom": self.machine.nom,
+                "prix": self.machine.prix,
+                "n_serie": self.machine.n_serie,
+            },
+            "quantite_ressource": {
+                "ressource": self.quantite_ressource.ressource,
+                "quantite": self.quantite_ressource.quantite,
+            },
+            "duree": self.duree,
+            # "etape_suivante": {
+            #   "nom": self.etape_suivant.nom,
+            #   "duree": self.etape_suivant.duree,
+            # }
+            # if self.etape_suivant
+            # else None,
+        }
+
 
 class Produit(Objet):
     premiere_etape = models.ForeignKey(
@@ -86,6 +182,18 @@ class Produit(Objet):
     def __str__(self):
         return f"{self.nom} "
 
+    def json(self):
+        return {
+            "Etape": {
+                "nom": self.premiere_etape.nom,
+                "machine": self.premiere_etape.machine,
+                "quantite_ressource": self.premiere_etape.quantite_ressource,
+                "duree": self.premiere_etape.duree,
+            }
+            # if self.premiere_etape
+            # else None,
+        }
+
 
 class Stock(models.Model):
     ressource = models.ForeignKey(Ressource, on_delete=models.CASCADE)
@@ -93,3 +201,12 @@ class Stock(models.Model):
 
     def __str__(self):
         return f"{self.ressource.nom} : {self.nombre}"
+
+    def json(self):
+        return {
+            "ressource": {
+                "nom": self.ressource.nom,
+                "prix": self.ressource.prix,
+            },
+            "nombre": self.nombre,
+        }
