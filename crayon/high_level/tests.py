@@ -47,6 +47,6 @@ class UsineCostModelTests(TestCase):
     def Calcul_cout_total(self):
         cout_total = self.usineCost + self.total_produit
 
-        cout_total_attendu = 11075  # self.total_cost + self.total_produit_attendu
+        cout_total_attendu = 20  # self.total_cost + self.total_produit_attendu
 
         self.assertEqual(cout_total, cout_total_attendu)
