@@ -75,8 +75,8 @@ class Usine(Local):  # heritage Usine herite de local
         machine_cost = 0
         # machine_cost = sum(list(Machine.objects.values_list('prix', flat=True))) #or
         for mach in Machine.objects.all():
-            for pri in mach.prix:
-                machine_cost = machine_cost + mach.prix
+            # for pri in mach.prix:
+            machine_cost = machine_cost + mach.prix
         # machine_cost = sum(Machine.costs() for Machin in self.machines.all())
         local_cost = self.surface * self.ville.prix_metre2
         return machine_cost + local_cost
