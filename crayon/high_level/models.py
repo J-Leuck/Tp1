@@ -1,5 +1,5 @@
 # Create your models here.
-# Create your models here.
+
 from django.db import models
 
 
@@ -11,7 +11,7 @@ class Ville(models.Model):
     def __str__(self):
         return f"{self.nom} \n {self.code_postal}"
 
-    def json(self):
+    def json_extended(self):
         return {
             "nom": self.nom,
             "code_postal": self.code_postal,
@@ -32,11 +32,7 @@ class Local(models.Model):
     def json(self):
         return {
             "nom": self.nom,
-            "ville": {
-                "nom": self.nom,
-                "code_postal": self.ville.code_postal,
-                "prix_metre2": self.ville.prix_metre2,
-            },
+            "ville": self.ville.json_extended(),
             "surface": self.surface,
         }
 
@@ -57,7 +53,7 @@ class Machine(models.Model):
     def costs(self):
         return self.prix
 
-    def json(self):
+    def json_extended(self):
         return {
             "nom": self.nom,
             "prix": self.prix,
@@ -73,11 +69,9 @@ class Usine(Local):  # heritage Usine herite de local
 
     def costs(self):
         machine_cost = 0
-        # machine_cost = sum(list(Machine.objects.values_list('prix', flat=True))) #or
         for mach in Machine.objects.all():
-            # for pri in mach.prix:
             machine_cost = machine_cost + mach.prix
-        # machine_cost = sum(Machine.costs() for Machin in self.machines.all())
+
         local_cost = self.surface * self.ville.prix_metre2
         return machine_cost + local_cost
 
@@ -90,15 +84,14 @@ class Usine(Local):  # heritage Usine herite de local
                 "prix": self.ville.prix_metre2,
             },
             "surface": self.surface,
-            # "machines": [
-            # {
-            #   "nom": self.machines.nom,
-            #  "prix": self.machines.prix,
-            # "numero_de_serie": machine.numero_de_serie,
-            # }
-            # for machine in self.machines.all()
+            "machines": [
+                mach.json_extended() for mach in self.machines.all()
+            ],  # [mach.pk for mach in Machine.objects.all()
             # ],
         }
+
+
+# list.append(mach.id)
 
 
 class Objet(models.Model):
@@ -108,11 +101,12 @@ class Objet(models.Model):
     def __str__(self):
         return f"{self.nom} \n {self.prix} $"
 
-    def json(self):
+
+"""    def json(self):
         return {
             "nom": self.nom,
             "prix": self.prix,
-        }
+        }"""
 
 
 class Ressource(Objet):
@@ -130,14 +124,15 @@ class QuantiteRessource(models.Model):
     def costs(self):
         return self.quantite * self.ressource.prix
 
-    def json(self):
+
+"""    def json(self):
         return {
             "ressource": {
                 "nom": self.ressource.nom,
                 "prix": self.ressource.prix,
             },
             "quantite": self.quantite,
-        }
+        }"""
 
 
 class Etape(models.Model):
@@ -152,7 +147,8 @@ class Etape(models.Model):
     def __str__(self):
         return f"{self.nom} : {self.machine.nom} \n {self.duree}"
 
-    def json(self):
+
+"""    def json(self):
         return {
             "nom": self.nom,
             "machine": {
@@ -164,14 +160,10 @@ class Etape(models.Model):
                 "ressource": self.quantite_ressource.ressource,
                 "quantite": self.quantite_ressource.quantite,
             },
-            # "duree": self.duree,
-            # "etape_suivante": {
-            #  "nom": self.etape_suivant.nom,
-            # "duree": self.etape_suivant.duree,
-            # }
-            # if self.etape_suivant
-            # else None,
-        }
+            "duree": self.duree,
+             "etape_suivante": self
+
+        }"""
 
 
 class Produit(Objet):
@@ -182,7 +174,8 @@ class Produit(Objet):
     def __str__(self):
         return f"{self.nom} "
 
-    def json(self):
+
+"""    def json(self):
         return {
             "Etape": {
                 "nom": self.premiere_etape.nom,
@@ -192,7 +185,7 @@ class Produit(Objet):
             }
             # if self.premiere_etape
             # else None,
-        }
+        }"""
 
 
 class Stock(models.Model):
@@ -202,11 +195,11 @@ class Stock(models.Model):
     def __str__(self):
         return f"{self.ressource.nom} : {self.nombre}"
 
-    def json(self):
+    """def json(self):
         return {
             "ressource": {
                 "nom": self.ressource.nom,
                 "prix": self.ressource.prix,
             },
             "nombre": self.nombre,
-        }
+        }"""

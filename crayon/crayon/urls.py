@@ -17,7 +17,28 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from high_level import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path(
+        "ville/<int:pk>",
+        views.VilleDetailView.as_view(),
+        name="ville",
+    ),
+    path(
+        "Local/<int:pk>",
+        views.LocalDetailView.as_view(),
+        name="local",
+    ),
+    path(
+        "Machine/<int:pk>",
+        views.MachineDetailView.as_view(),
+        name="machine",
+    ),
+    path(
+        "Usine/<int:pk>",
+        views.UsineDetailView.as_view(),
+        name="usine",
+    ),
 ]
