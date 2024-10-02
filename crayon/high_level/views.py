@@ -45,4 +45,4 @@ class UsineDetailView(DetailView):
     def render_to_response(
         self, context: dict[str, Any], **response_kwargs: Any
     ) -> HttpResponse:
-        return JsonResponse(self.object.json())
+        return JsonResponse(self.object.json_extended())

@@ -75,14 +75,10 @@ class Usine(Local):  # heritage Usine herite de local
         local_cost = self.surface * self.ville.prix_metre2
         return machine_cost + local_cost
 
-    def json(self):
+    def json_extended(self):
         return {
             "nom": self.nom,
-            "ville": {
-                "nom": self.ville.nom,
-                "code_postale": self.ville.code_postal,
-                "prix": self.ville.prix_metre2,
-            },
+            "ville": self.ville.json_extended(),
             "surface": self.surface,
             "machines": [
                 mach.json_extended() for mach in self.machines.all()
@@ -101,12 +97,11 @@ class Objet(models.Model):
     def __str__(self):
         return f"{self.nom} \n {self.prix} $"
 
-
-"""    def json(self):
+    def json(self):
         return {
             "nom": self.nom,
             "prix": self.prix,
-        }"""
+        }
 
 
 class Ressource(Objet):
