@@ -22,23 +22,58 @@ from high_level import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
-        "ville/<int:pk>",
+        "Ville/<int:pk>",
         views.VilleDetailView.as_view(),
-        name="ville",
+        name="Ville",
     ),
     path(
         "Local/<int:pk>",
         views.LocalDetailView.as_view(),
-        name="local",
+        name="Local",
     ),
     path(
         "Machine/<int:pk>",
         views.MachineDetailView.as_view(),
-        name="machine",
+        name="Machine",
+    ),
+    path(
+        "Objet/<int:pk>",
+        views.ObjetDetailView.as_view(),
+        name="Objet",
     ),
     path(
         "Usine/<int:pk>",
         views.UsineDetailView.as_view(),
-        name="usine",
+        name="Usine",
+    ),
+    path(
+        "SiegeSocial/<int:pk>",
+        views.SiegeSocialDetailView.as_view(),
+        name="SiegeSocial",
+    ),
+    path(
+        "Ressource/<int:pk>",
+        views.RessourceDetailView.as_view(),
+        name="Ressource",
+    ),
+    path(
+        "QuantiteRessource/<int:pk>",
+        views.QuantiteRessourceDetailView.as_view(),
+        name="QuantiteRessource",
+    ),
+    path(
+        "Etape/<int:pk>",
+        views.EtapeDetailView.as_view(),
+        name="Etape",
+    ),
+    path(
+        "Produit/<int:pk>",
+        views.ProduitDetailView.as_view(),
+        name="Produit",
+    ),
+    path(
+        "Stock/<int:pk>",
+        views.StockDetailView.as_view(),
+        name="Stock",
     ),
 ]

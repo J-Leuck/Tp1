@@ -1,53 +1,29 @@
 # Create your tests here.
 from django.test import TestCase
-from .models import Ville, Machine, Usine, QuantiteRessource, Ressource
+from .models import Ville, Machine, Ressource, Usine, Stock
 
 
-class UsineCostModelTests(TestCase):
+class TestUnitaire(TestCase):
     def test_usine_creation(self):
-        self.ville = Ville.objects.create(
-            nom="Toulouse", code_postal=31000, prix_metre2=2000
-        )
-        self.usine = Usine.objects.create(nom="Dopron", ville=self.ville, surface=50)
-        self.machine_1 = Machine.objects.create(
-            nom="Bras robot", prix=2000, n_serie=17896
-        )
-        self.machine_2 = Machine.objects.create(nom="scie", prix=1000, n_serie=15732)
-        self.usine.machines.set([self.machine_1, self.machine_2])
+        ville = Ville.objects.create(nom="Labege", code_postal=31000, prix_metre2=2000)
 
-        objet1 = Ressource.objects.create(nom="Bois", prix=10)
-        objet2 = Ressource.objects.create(nom="Mine", prix=15)
-        # stock = Stock.objects.create(ressource=objet1, nombre=1000)
-        # stock = Stock.objects.create(ressource=objet2, nombre=50)
+        machine1 = Machine.objects.create(nom="M1", prix=1000, n_serie=16832)
+        machine2 = Machine.objects.create(nom="M2", prix=2000, n_serie=16833)
 
-        # def test_Calcul_cout_usine(self):
-        usineCost = self.usine.costs()
-        machine_cost = 2000 + 1000
-        surface_cost = 2000 * 50
-        total_cost = machine_cost + surface_cost
+        usine1 = Usine.objects.create(nom="EtsIndustries", ville=ville, surface=50)
 
-        self.assertEqual(usineCost, total_cost)
+        usine1.machines.set([machine1, machine2])
 
-        # def test_Calcul_cout_quantiteRessource(self):
-        quantite_bois = QuantiteRessource.objects.create(
-            ressource=objet1, quantite=1000
-        )
-        quantite_mine = QuantiteRessource.objects.create(ressource=objet2, quantite=50)
+        bois = Ressource.objects.create(nom="bois", prix=10)
+        mine = Ressource.objects.create(nom="mine", prix=15)
 
-        bois_cost = quantite_bois.costs()
-        mine_cost = quantite_mine.costs()
-        total_produit = bois_cost + mine_cost
+        # quantite_bois = QuantiteRessource.objects.create( ressource=bois, quantite=1000)
+        # quantite_mine = QuantiteRessource.objects.create(ressource=mine, quantite=50)
 
-        bois_cost_attendu = 10000
-        mine_cost_attendu = 750
-        total_produit_attendu = bois_cost_attendu + mine_cost_attendu
+        stock_bois = Stock.objects.create(ressource=bois, nombre=1000)
+        stock_mine = Stock.objects.create(ressource=mine, nombre=50)
 
-        self.assertEqual(bois_cost, bois_cost_attendu)
-        self.assertEqual(mine_cost, mine_cost_attendu)
+        usine1.stock.set([stock_bois, stock_mine])
 
-        # def test_Calcul_cout_total(self):
-        cout_total = usineCost + total_produit
-
-        cout_total_attendu = total_cost + total_produit_attendu
-
-        self.assertEqual(cout_total, cout_total_attendu)
+        # total_cout = usine1.costs() + quantite_bois.costs() + quantite_mine.costs()
+        self.assertEqual(Usine.objects.first().costs(), 110750)

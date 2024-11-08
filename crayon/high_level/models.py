@@ -9,13 +9,13 @@ class Ville(models.Model):
     prix_metre2 = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.nom} \n {self.code_postal}"
+        return self.nom
 
     def json_extended(self):
         return {
             "nom": self.nom,
-            "code_postal": self.code_postal,
-            "prix_metre2": self.prix_metre2,
+            "code postale": self.code_postal,
+            "prix par m2": self.prix_metre2,
         }
 
 
@@ -27,7 +27,7 @@ class Local(models.Model):
     surface = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.nom} \n {self.ville}"
+        return self.nom
 
     def json(self):
         return {
@@ -41,6 +41,13 @@ class SiegeSocial(Local):  # heritage siege herite de local
     def __str__(self):
         return f"Siège social à {self.ville.nom}"
 
+    def json(self):  # Rajout L
+        return {
+            "nom": self.nom,
+            "ville": self.ville.json_extended(),
+            "surface": self.surface,
+        }
+
 
 class Machine(models.Model):
     nom = models.CharField(max_length=100)
@@ -48,7 +55,7 @@ class Machine(models.Model):
     n_serie = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.nom} : {self.n_serie}"
+        return self.nom
 
     def costs(self):
         return self.prix
@@ -57,37 +64,8 @@ class Machine(models.Model):
         return {
             "nom": self.nom,
             "prix": self.prix,
-            "n_serie": self.n_serie,
+            "numero de serie": self.n_serie,
         }
-
-
-class Usine(Local):  # heritage Usine herite de local
-    machines = models.ManyToManyField(Machine)  # agrégation
-
-    def __str__(self):
-        return self.nom
-
-    def costs(self):
-        machine_cost = 0
-        for mach in Machine.objects.all():
-            machine_cost = machine_cost + mach.prix
-
-        local_cost = self.surface * self.ville.prix_metre2
-        return machine_cost + local_cost
-
-    def json_extended(self):
-        return {
-            "nom": self.nom,
-            "ville": self.ville.json_extended(),
-            "surface": self.surface,
-            "machines": [
-                mach.json_extended() for mach in self.machines.all()
-            ],  # [mach.pk for mach in Machine.objects.all()
-            # ],
-        }
-
-
-# list.append(mach.id)
 
 
 class Objet(models.Model):
@@ -95,7 +73,7 @@ class Objet(models.Model):
     prix = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.nom} \n {self.prix} $"
+        return self.nom
 
     def json(self):
         return {
@@ -108,6 +86,12 @@ class Ressource(Objet):
     def __str__(self):
         return self.nom
 
+    def json(self):  # Rajout L
+        return {
+            "nom": self.nom,
+            "prix": self.prix,
+        }
+
 
 class QuantiteRessource(models.Model):
     ressource = models.ForeignKey(Ressource, on_delete=models.CASCADE)  # composition
@@ -119,15 +103,14 @@ class QuantiteRessource(models.Model):
     def costs(self):
         return self.quantite * self.ressource.prix
 
-
-"""    def json(self):
+    def json_extended(self):  # Luc ajout
         return {
             "ressource": {
                 "nom": self.ressource.nom,
                 "prix": self.ressource.prix,
             },
             "quantite": self.quantite,
-        }"""
+        }
 
 
 class Etape(models.Model):
@@ -140,47 +123,28 @@ class Etape(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nom} : {self.machine.nom} \n {self.duree}"
+        return self.nom
 
-
-"""    def json(self):
+    def json_extended(self):  # Luc ajout
         return {
             "nom": self.nom,
-            "machine": {
-                "nom": self.machine.nom,
-                "prix": self.machine.prix,
-                "n_serie": self.machine.n_serie,
-            },
-            "quantite_ressource": {
-                "ressource": self.quantite_ressource.ressource,
-                "quantite": self.quantite_ressource.quantite,
-            },
+            "machine": self.machine.json_extended(),
+            "quantite_ressource": self.quantite_ressource.json_extended(),
             "duree": self.duree,
-             "etape_suivante": self
-
-        }"""
+            # "etape_suivant" : self,   # A voir
+        }
 
 
 class Produit(Objet):
-    premiere_etape = models.ForeignKey(
-        Etape, null=True, on_delete=models.PROTECT, blank=True
-    )
+    premiere_etape = models.ForeignKey(Etape, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.nom} "
+        return self.nom
 
-
-"""    def json(self):
+    def json_extended(self):  # Luc ajout
         return {
-            "Etape": {
-                "nom": self.premiere_etape.nom,
-                "machine": self.premiere_etape.machine,
-                "quantite_ressource": self.premiere_etape.quantite_ressource,
-                "duree": self.premiere_etape.duree,
-            }
-            # if self.premiere_etape
-            # else None,
-        }"""
+            "premiere_etape": self.premiere_etape.json_extended(),
+        }
 
 
 class Stock(models.Model):
@@ -188,13 +152,43 @@ class Stock(models.Model):
     nombre = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.ressource.nom} : {self.nombre}"
+        return f"{self.nombre} x {self.ressource.nom}"
 
-    """def json(self):
+    def json_extended(self):
         return {
             "ressource": {
                 "nom": self.ressource.nom,
                 "prix": self.ressource.prix,
             },
             "nombre": self.nombre,
-        }"""
+        }
+
+
+class Usine(Local):  # heritage Usine herite de local
+    machines = models.ManyToManyField(Machine)  # agrégation
+    stock = models.ManyToManyField(Stock)  # je suppose qu'une usine à plusieurs stocks
+
+    def __str__(self):
+        return self.nom
+
+    def costs(self):
+        machine_cost = 0
+        stock_cost = 0
+
+        for mach in Machine.objects.all():
+            machine_cost = machine_cost + mach.prix
+
+        for stk in Stock.objects.all():
+            stock_cost = stock_cost + stk.ressource.prix * stk.nombre
+
+        local_cost = self.surface * self.ville.prix_metre2
+        return machine_cost + stock_cost + local_cost
+
+    def json_extended(self):
+        return {
+            "nom": self.nom,
+            "ville": self.ville.json_extended(),
+            "surface": self.surface,
+            "machines": [mach.json_extended() for mach in self.machines.all()],
+            "stock": [stoc.json_extended() for stoc in self.stock.all()],  # rajout L
+        }
