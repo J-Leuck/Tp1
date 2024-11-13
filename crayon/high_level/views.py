@@ -34,7 +34,7 @@ class LocalDetailView(DetailView):
     def render_to_response(
         self, context: dict[str, Any], **response_kwargs: Any
     ) -> HttpResponse:
-        return JsonResponse(self.object.json())
+        return JsonResponse(self.object.json_extended())
 
 
 class MachineDetailView(DetailView):
@@ -52,7 +52,7 @@ class ObjetDetailView(DetailView):
     def render_to_response(
         self, context: dict[str, Any], **response_kwargs: Any
     ) -> HttpResponse:
-        return JsonResponse(self.object.json())
+        return JsonResponse(self.object.json_extended())
 
 
 class UsineDetailView(DetailView):
@@ -70,7 +70,7 @@ class SiegeSocialDetailView(DetailView):
     def render_to_response(
         self, context: dict[str, Any], **response_kwargs: Any
     ) -> HttpResponse:
-        return JsonResponse(self.object.json())
+        return JsonResponse(self.object.json_extended())
 
 
 class RessourceDetailView(DetailView):
@@ -79,7 +79,7 @@ class RessourceDetailView(DetailView):
     def render_to_response(
         self, context: dict[str, Any], **response_kwargs: Any
     ) -> HttpResponse:
-        return JsonResponse(self.object.json())
+        return JsonResponse(self.object.json_extended())
 
 
 class QuantiteRessourceDetailView(DetailView):

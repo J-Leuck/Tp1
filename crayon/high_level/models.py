@@ -29,7 +29,7 @@ class Local(models.Model):
     def __str__(self):
         return self.nom
 
-    def json(self):
+    def json_extended(self):
         return {
             "nom": self.nom,
             "ville": self.ville.json_extended(),
@@ -39,9 +39,9 @@ class Local(models.Model):
 
 class SiegeSocial(Local):  # heritage siege herite de local
     def __str__(self):
-        return f"Siège social à {self.ville.nom}"
+        return f"Siege social a {self.ville.nom}"
 
-    def json(self):  # Rajout L
+    def json_extended(self):  # Rajout L
         return {
             "nom": self.nom,
             "ville": self.ville.json_extended(),
@@ -75,7 +75,7 @@ class Objet(models.Model):
     def __str__(self):
         return self.nom
 
-    def json(self):
+    def json_extended(self):
         return {
             "nom": self.nom,
             "prix": self.prix,
@@ -86,7 +86,7 @@ class Ressource(Objet):
     def __str__(self):
         return self.nom
 
-    def json(self):  # Rajout L
+    def json_extended(self):  # Rajout L
         return {
             "nom": self.nom,
             "prix": self.prix,
@@ -105,10 +105,7 @@ class QuantiteRessource(models.Model):
 
     def json_extended(self):  # Luc ajout
         return {
-            "ressource": {
-                "nom": self.ressource.nom,
-                "prix": self.ressource.prix,
-            },
+            "ressource": self.ressource.json_extended(),
             "quantite": self.quantite,
         }
 
@@ -131,7 +128,7 @@ class Etape(models.Model):
             "machine": self.machine.json_extended(),
             "quantite_ressource": self.quantite_ressource.json_extended(),
             "duree": self.duree,
-            # "etape_suivant" : self,   # A voir
+            # M"etape_suivant" : self,   # A voir
         }
 
 
@@ -156,10 +153,7 @@ class Stock(models.Model):
 
     def json_extended(self):
         return {
-            "ressource": {
-                "nom": self.ressource.nom,
-                "prix": self.ressource.prix,
-            },
+            "ressource": self.ressource.json_extended(),
             "nombre": self.nombre,
         }
 
